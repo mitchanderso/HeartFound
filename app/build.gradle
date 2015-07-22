@@ -22,11 +22,12 @@ android {
         staging {
             debuggable true
         }
+        debugging {
+            debuggable true
+        }
 
     }
 }
-
-apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -53,7 +54,7 @@ afterEvaluate {
     def adbPath = getAdbPath()
     android.applicationVariants.each { variant ->
         if (variant.buildType.name.equals("staging")) {
-            def apkOutputFile = "${apkOutputDir}/YourSignedApkName.apk"
+            def apkOutputFile = "${apkOutputDir}/HeartFound.apk"
             def variantOutput = variant.outputs[0].outputFile
 
             task("signAlbertStaging", type: Exec, dependsOn: variant.assemble) {

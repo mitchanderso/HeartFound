@@ -4,6 +4,7 @@ package com.hackathon.chatable.heartfound;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,6 +19,8 @@ import com.aevi.helpers.ServiceState;
 import com.aevi.payment.PaymentAppConfiguration;
 import com.aevi.payment.PaymentAppConfigurationRequest;
 import com.aevi.payment.PaymentRequest;
+import com.aevi.payment.TransactionResult;
+import com.aevi.payment.TransactionStatus;
 
 import java.math.BigDecimal;
 
@@ -61,6 +64,44 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * Called by Android when the control returns to this activity.
+     *
+     * @param requestCode the code associated with the request (0)
+     * @param resultCode  the Intent result code
+     * @param data        the result data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 0) {
+
+
+                // Save the Payment Configuration in the Application Object
+                paymentAppConfiguration = PaymentAppConfiguration.fromIntent(data);
+
+                Log.d(TAG, "PaymentAppConfiguration retrieved. Currency code is: " + paymentAppConfiguration.getDefaultCurrency().getCurrencyCode());
+            } else if (requestCode > 0) {
+
+                TransactionResult transactionResult = TransactionResult.fromIntent(data);
+                // Check whether the transaction was successful
+                if (transactionResult.getTransactionStatus()== TransactionStatus.APPROVED)
+                {
+                    showMessage("Transaction Successful");
+                } else if (transactionResult.getTransactionStatus()== TransactionStatus.DECLINED){
+                    showMessage("Transaction failed");
+                }
+                else if (transactionResult.getTransactionStatus()== TransactionStatus.TIMEOUT){
+                    showMessage("Transaction timed out");
+                }
+            }
+        } else {
+            showExitDialog("There was a problem obtaining the PaymentAppConfiguration object.\n This application will now exit.");
+        }
+    }
+
     public void myMeth(View v) {
         BigDecimal parsedAmount = new BigDecimal("15");
 
@@ -68,6 +109,24 @@ public class MainActivity extends Activity {
 
         PaymentRequest paymentRequest = new PaymentRequest(parsedAmount);
         startActivityForResult(paymentRequest.createIntent(), Integer.parseInt("35"));
+    }
+
+    private void showMessage(String msg)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        TextView textView = new TextView(this);
+        textView.setText(msg);
+        textView.setTextSize(25);
+        textView.setGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setView(textView);
+        builder.setPositiveButton("Ok", new android.content.DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).setCancelable(false);
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void showExitDialog(String messageStr) {
