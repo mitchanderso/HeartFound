@@ -4,4 +4,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_email_entry">emailEntry</string>
+    <string-array name="email_array">
+        <item>Recipes</item>
+        <item>Health</item>
+        <item>Events</item>
+    </string-array>
+
 </resources>
