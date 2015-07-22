@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,16 +17,43 @@ import android.widget.TextView;
 import com.aevi.configuration.TerminalConfiguration;
 import com.aevi.helpers.CompatibilityException;
 import com.aevi.helpers.ServiceState;
+import com.aevi.helpers.services.AeviServiceConnectionCallback;
+import com.aevi.mail.MailService;
+import com.aevi.mail.MailServiceProvider;
 import com.aevi.payment.PaymentAppConfiguration;
 import com.aevi.payment.PaymentAppConfigurationRequest;
 import com.aevi.payment.PaymentRequest;
 import com.aevi.payment.TransactionResult;
 import com.aevi.payment.TransactionStatus;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 
 public class MainActivity extends Activity {
+
+    private class MyAsyncTask extends AsyncTask<String, Integer, Double>{
+        @Override
+        protected Double doInBackground(String... params) {
+            postData(params[0]);
+            return null;
+        }
+
+    };
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -62,6 +90,12 @@ public class MainActivity extends Activity {
             // Get the Payment App Configuration
             fetchPaymentAppConfiguration();
         }
+    }
+
+    public void loginScreen(View v)
+    {
+        Intent i = new Intent(this, emailEntry.class);
+        startActivity(i);
     }
 
     /**
@@ -101,6 +135,49 @@ public class MainActivity extends Activity {
             showExitDialog("There was a problem obtaining the PaymentAppConfiguration object.\n This application will now exit.");
         }
     }
+
+    public void postClick(View v)
+    {
+        new MyAsyncTask().execute("JACK");
+    }
+    public void postData(String name) {
+
+            //showMessage("Transaction timed out");
+
+            HttpClient httpClient = new DefaultHttpClient();
+            // replace with your url
+            HttpPost httpPost = new HttpPost("http://requestb.in/o2gqj4o2");
+
+
+            //Post Data
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+            nameValuePair.add(new BasicNameValuePair("username", name));
+            nameValuePair.add(new BasicNameValuePair("password", "123456789"));
+
+
+            //Encoding POST data
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                // log exception
+                e.printStackTrace();
+            }
+
+            //making POST request.
+            try {
+                HttpResponse response = httpClient.execute(httpPost);
+                // write response to log
+                Log.d("Http Post Response:", response.toString());
+            } catch (ClientProtocolException e) {
+                // Log exception
+                e.printStackTrace();
+            } catch (IOException e) {
+                // Log exception
+                e.printStackTrace();
+            }
+    }
+
+
 
     public void myMeth(View v) {
         BigDecimal parsedAmount = new BigDecimal("15");
