@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.aevi.configuration.TerminalConfiguration;
@@ -16,6 +17,9 @@ import com.aevi.helpers.CompatibilityException;
 import com.aevi.helpers.ServiceState;
 import com.aevi.payment.PaymentAppConfiguration;
 import com.aevi.payment.PaymentAppConfigurationRequest;
+import com.aevi.payment.PaymentRequest;
+
+import java.math.BigDecimal;
 
 
 public class MainActivity extends Activity {
@@ -55,6 +59,15 @@ public class MainActivity extends Activity {
             // Get the Payment App Configuration
             fetchPaymentAppConfiguration();
         }
+    }
+
+    public void myMeth(View v) {
+        BigDecimal parsedAmount = new BigDecimal("15");
+
+        //Log.d(tag, "Creating a payment request for movieId:" + movieId + ", amount:" + parsedAmount);
+
+        PaymentRequest paymentRequest = new PaymentRequest(parsedAmount);
+        startActivityForResult(paymentRequest.createIntent(), Integer.parseInt("35"));
     }
 
     private void showExitDialog(String messageStr) {
