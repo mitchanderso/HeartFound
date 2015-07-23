@@ -1,0 +1,59 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_to_red"
+    android:orientation="vertical"
+    tools:context="com.hackathon.chatable.heartfound.shareEmail">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:id="@+id/imageView"
+            android:background="@drawable/title_header"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="50dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+        <EditText
+            android:paddingLeft="15dp"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/etex"
+            android:hint="Enter Donation Amount"
+            android:textColor="@color/darkGrey"
+            android:textSize="25sp"
+            android:id="@+id/donateAmountEdit"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/submitbtn"
+            android:text="Submit"
+            android:id="@+id/donateBtn"
+            android:onClick="onClickDonate"
+            android:layout_below="@+id/emailEdit"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+    </LinearLayout>
+
+
+
+</LinearLayout>

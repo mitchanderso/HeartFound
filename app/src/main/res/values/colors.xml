@@ -5,6 +5,8 @@
     <color name="green">#ff18ff00</color>
     <color name="white">#fffefdff</color>
     <color name="crimson">#ffffbcd1</color>
+    <color name="lightcrimson">#85ffe8e6</color>
+    <color name="offwhite">#fbd3c5d8</color>
     <color name="darkGrey">#ff454545</color>
 
 </resources>

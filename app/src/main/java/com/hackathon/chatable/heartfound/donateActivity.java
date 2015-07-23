@@ -1,7 +1,5 @@
 package com.hackathon.chatable.heartfound;
 
-
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,12 +10,10 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -39,44 +35,26 @@ import com.aevi.printing.PrintServiceProvider;
 import com.aevi.printing.model.Alignment;
 import com.aevi.printing.model.PrintPayload;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
 
 
-
-
-public class MainActivity extends Activity {
-
-
+public class donateActivity extends Activity {
+    EditText donateAmountEdit;
+    BigDecimal parsedAmount;
     private static final String TAG = MainActivity.class.getSimpleName();
-    int lockCost;
-
     private PaymentAppConfiguration paymentAppConfiguration = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_donate);
 
-        lockCost = 10;
+        donateAmountEdit   = (EditText)findViewById(R.id.donateAmountEdit);
 
         // Check if TerminalServices are installed
         try {
             if (TerminalConfiguration.isTerminalServicesInstalled(this) == false) {
-               showExitDialog("Terminal Services is not installed or installed incorrectly.\nThis application will now exit.");
+                showExitDialog("Terminal Services is not installed or installed incorrectly.\nThis application will now exit.");
                 return;
             }
         } catch(CompatibilityException e) {
@@ -100,21 +78,6 @@ public class MainActivity extends Activity {
             fetchPaymentAppConfiguration();
         }
     }
-
-    public void loginScreen(View v)
-    {
-        Intent i = new Intent(this, emailEntry.class);
-        startActivity(i);
-    }
-
-    /**
-     * Called by Android when the control returns to this activity.
-     *
-     * @param requestCode the code associated with the request (0)
-     * @param resultCode  the Intent result code
-     * @param data        the result data
-     */
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -144,30 +107,6 @@ public class MainActivity extends Activity {
         } else {
             showExitDialog("There was a problem obtaining the PaymentAppConfiguration object.\n This application will now exit.");
         }
-    }
-
-    public void postClick(View v)
-    {
-        Intent i = new Intent(this, shareEmail.class);
-        startActivity(i);
-    }
-
-    public void donateClick(View v)
-    {
-        Intent i = new Intent(this, donateActivity.class);
-        startActivity(i);
-    }
-
-
-
-    public void myMeth(View v) {
-        BigDecimal parsedAmount = new BigDecimal(lockCost);
-
-        //Log.d(tag, "Creating a payment request for movieId:" + movieId + ", amount:" + parsedAmount);
-
-        PaymentRequest paymentRequest = new PaymentRequest(parsedAmount);
-        paymentRequest.setCurrency(Currency.getInstance("AUD"));
-        startActivityForResult(paymentRequest.createIntent(), Integer.parseInt("35"));
     }
 
     public Bitmap toGrayscale(Bitmap bmpOriginal)
@@ -200,19 +139,25 @@ public class MainActivity extends Activity {
                 PrintPayload ticket = new PrintPayload();
                 ticket.append(title).align(Alignment.CENTER);
                 ticket.appendEmptyLine();
+
                 ticket.appendEmptyLine();
                 ticket.append("--------------------------------").align(Alignment.CENTER);
-                ticket.append("Love Lock        10$").align(Alignment.RIGHT);
+                ticket.append("Charitable Donation of ").align(Alignment.LEFT);
+                ticket.append("$ " + parsedAmount.toString()).align(Alignment.RIGHT);
                 ticket.appendEmptyLine();
                 ticket.appendEmptyLine();
+                ticket.append("Tax Deductible").align(Alignment.LEFT);
                 ticket.append("--------------------------------").align(Alignment.CENTER);
 
                 ticket.appendEmptyLine();
-                ticket.append("Use your phone cam to get your  ").align(Alignment.CENTER);
-                ticket.append("unique share URL  ").align(Alignment.CENTER);
+                ticket.append("Use your phone QR Scanner to get").align(Alignment.CENTER);
+                ticket.append("the Heart Foundations ").align(Alignment.CENTER);
+                ticket.append("Health Information Service ").align(Alignment.CENTER);
+                ticket.append("contact details, call anytime ").align(Alignment.CENTER);
+                ticket.append("with any health questions or concerns ").align(Alignment.CENTER);
 
                 BitmapFactory.Options bitmapFactoryOptions = service.getDefaultPrinterSettings().asBitmapFactoryOptions();
-                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.qr_code, bitmapFactoryOptions);
+                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.qr_code_details, bitmapFactoryOptions);
                 ticket.append(logo).contrastLevel(100).align(Alignment.CENTER);
 
                 ticket.append("Heart Disease affects ").align(Alignment.CENTER);
@@ -221,6 +166,11 @@ public class MainActivity extends Activity {
                 ticket.append("is preventable").align(Alignment.CENTER);
                 ticket.append("learn more at").align(Alignment.CENTER);
                 ticket.append("www.heartfoundation.org.au").align(Alignment.CENTER);
+
+                ticket.appendEmptyLine();
+                ticket.appendEmptyLine();
+                ticket.append("Call the Health Information").align(Alignment.CENTER);
+                ticket.append("Service 1300 36 27 87").align(Alignment.CENTER);
 
                 BitmapFactory.Options bitmapFactoryOptions2 = service.getDefaultPrinterSettings().asBitmapFactoryOptions();
                 Bitmap logo2 = BitmapFactory.decodeResource(getResources(), R.drawable.heart_foundation, bitmapFactoryOptions2);
@@ -265,6 +215,13 @@ public class MainActivity extends Activity {
         alert.show();
     }
 
+    /**
+     * fetch the Payment Configuration
+     */
+    private void fetchPaymentAppConfiguration() {
+        startActivityForResult(PaymentAppConfigurationRequest.createIntent(), 0);
+    }
+
     private void showExitDialog(String messageStr) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         TextView textView = new TextView(this);
@@ -281,39 +238,25 @@ public class MainActivity extends Activity {
         alert.show();
     }
 
-    /**
-     * fetch the Payment Configuration
-     */
-    private void fetchPaymentAppConfiguration() {
-        startActivityForResult(PaymentAppConfigurationRequest.createIntent(), 0);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_donate, menu);
+        return true;
     }
 
-    private void mainSettings()
+    public void onClickDonate(View v)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText et = new EditText(this);
-        et.setHint("Enter the Lock Cost");
-        et.setGravity(Gravity.CENTER_HORIZONTAL);
-        builder.setView(et);
-        builder.setPositiveButton("Confirm", new android.content.DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                    String cost = et.getText().toString();
-                    lockCost = Integer.parseInt(cost);
-                    dialog.dismiss();
-                }
-        }).setCancelable(false);
-        AlertDialog alert = builder.create();
-        alert.show();
+        String donateAmt = donateAmountEdit.getText().toString();
+        parsedAmount = new BigDecimal(donateAmt);
+
+        //Log.d(tag, "Creating a payment request for movieId:" + movieId + ", amount:" + parsedAmount);
+
+        PaymentRequest paymentRequest = new PaymentRequest(parsedAmount);
+        paymentRequest.setCurrency(Currency.getInstance("AUD"));
+        startActivityForResult(paymentRequest.createIntent(), Integer.parseInt("35"));
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -323,7 +266,7 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            mainSettings();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -9,5 +9,8 @@
         <item>Health</item>
         <item>Events</item>
     </string-array>
+    <string name="title_activity_share_memory">ShareMemory</string>
+    <string name="title_activity_share_email">shareEmail</string>
+    <string name="title_activity_donate">donateActivity</string>
 
 </resources>
